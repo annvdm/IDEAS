@@ -174,11 +174,11 @@ equation
       points={{307,2.16667},{307,21.3333},{282,21.3333}},
       color={255,204,51},
       thickness=0.5));
-  connect(Roof1.propsBus_a, bedRoom3.proBusExt[2]) annotation (Line(
+  connect(RoofWest.propsBus_a, bedRoom3.proBusExt[2]) annotation (Line(
       points={{281,2.16667},{281,11.5},{282,11.5},{282,20}},
       color={255,204,51},
       thickness=0.5));
-  connect(Roof2.propsBus_a, bedRoom3.proBusCei) annotation (Line(
+  connect(RoofEast.propsBus_a, bedRoom3.proBusCei) annotation (Line(
       points={{261,2.16667},{261,24},{270.2,24}},
       color={255,204,51},
       thickness=0.5));

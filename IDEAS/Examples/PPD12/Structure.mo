@@ -8,24 +8,24 @@ model Structure "Ppd 12 example model"
   package MediumAir = IDEAS.Media.Air;
   package MediumWater = IDEAS.Media.Water;
 
-  // GEOMETRY
-  parameter Modelica.SIunits.Length hFloor0=2.9 "Height of ground floor";
-  parameter Modelica.SIunits.Length hFloor1=2.7 "Height of first floor";
-  parameter Modelica.SIunits.Length hFloor2=2.5 "Height of second floor";
+  // GEOMETRY - distances are measured center-to-center of walls
+  parameter Modelica.SIunits.Length hFloor0=2.9 "Height of ground floor: ground to ceiling";
+  parameter Modelica.SIunits.Length hFloor1=2.7 "Height of first floor: ground to ceiling";
+  parameter Modelica.SIunits.Length hFloor2=2.5 "Height of second floor: ground to ceiling";
   parameter Modelica.SIunits.Length lHallway=8 "Length of hallway";
   parameter Modelica.SIunits.Length wHallwayAvg=(wHallway1+wHallway2)/2 "Hallway width";
   parameter Modelica.SIunits.Length wHallway1=1.1 "Hallway width";
-  parameter Modelica.SIunits.Length wHallway2=1.4 "Hallway width";
+  parameter Modelica.SIunits.Length wHallway2=1.6 "Hallway width";
   parameter Modelica.SIunits.Length wZon=(wZonStr+wBathroom)/2 "Avg living width";
   parameter Modelica.SIunits.Length wZonStr=3.2 "Living width at street";
-  parameter Modelica.SIunits.Length wBuilding = 4.6;
+  parameter Modelica.SIunits.Length wBuilding = 4.6 "Building width - between common wall centers";
   parameter Modelica.SIunits.Length wBathroom = 2.85;
-  parameter Modelica.SIunits.Length lDiner = 3;
+  parameter Modelica.SIunits.Length lDiner = 3.1;
   parameter Modelica.SIunits.Length wBedroom = 4.4;
   parameter Modelica.SIunits.Length wDiner = 4.5;
-  parameter Modelica.SIunits.Length lPorch = 2;
+  parameter Modelica.SIunits.Length lPorch = 2.1;
   parameter Modelica.SIunits.Length wPorch = wBuilding-wKitchen;
-  parameter Modelica.SIunits.Length wKitchen = 1.4;
+  parameter Modelica.SIunits.Length wKitchen = 1.4 "Width of kitchen";
   parameter Modelica.SIunits.Length lHalfBuilding = 3.75;
   parameter Modelica.SIunits.Length lBuilding = 8;
 
@@ -73,17 +73,17 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.PvcInsulated fraType,
     redeclare IDEAS.Buildings.Data.Glazing.Ins2Ar glazing,
     inc=(IDEAS.Types.Tilt.Wall + IDEAS.Types.Tilt.Ceiling)/2,
-    A=1.2*1) "Window roof, bedroom 3"
+    A=1.3*0.95)
+             "Window roof, bedroom 3"
     annotation (Placement(transformation(
         extent={{-5,10},{5,-10}},
         rotation=90,
         origin={305,-2})));
-  IDEAS.Buildings.Components.OuterWall Roof2(
+  IDEAS.Buildings.Components.OuterWall RoofEast(
     azi=east,
     inc=(IDEAS.Types.Tilt.Wall + IDEAS.Types.Tilt.Ceiling)/2,
-    A=wBedroom*lHalfBuilding*sqrt(2)/2,
-    redeclare IDEAS.Examples.PPD12.Data.Roof constructionType)
-    "Roof, east side"
+    redeclare IDEAS.Examples.PPD12.Data.Roof constructionType,
+    A=wBedroom*lHalfBuilding*sqrt(2)/2 - winBed3.A) "Roof, east side"
     annotation (Placement(transformation(
         extent={{-5,-10},{5,10}},
         rotation=90,
@@ -113,7 +113,6 @@ model Structure "Ppd 12 example model"
     bouTypFlo=IDEAS.Buildings.Components.Interfaces.BoundaryType.SlabOnGround,
     bouTypCei=IDEAS.Buildings.Components.Interfaces.BoundaryType.External,
     redeclare IDEAS.Examples.PPD12.Data.TripleGlazing glazingC,
-    A_winC=2.55*1.74,
     fracC=0.1,
     redeclare IDEAS.Examples.PPD12.Data.OuterWall conTypC,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall10 conTypA,
@@ -122,7 +121,8 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.FloorOnGround conTypFlo,
     nSurfExt=1,
     redeclare Data.Ppd12WestShadingGnd shaTypC,
-    n50=n50)
+    n50=n50,
+    A_winC=2.42*1.75)
     annotation (Placement(transformation(extent={{-26,56},{-46,36}})));
 
   IDEAS.Buildings.Components.RectangularZoneTemplate hallway(
@@ -288,8 +288,6 @@ model Structure "Ppd 12 example model"
     fracC=0.15,
     l=wBedroom,
     w=lHalfBuilding,
-    h=hFloor1,
-    A_winC=1.1*0.66 + 1.1*1.54,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall18 conTypC,
     bouTypA=IDEAS.Buildings.Components.Interfaces.BoundaryType.InternalWall,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall10 conTypA,
@@ -299,7 +297,9 @@ model Structure "Ppd 12 example model"
     bouTypCei=IDEAS.Buildings.Components.Interfaces.BoundaryType.BoundaryWall,
     redeclare IDEAS.Examples.PPD12.Data.FloorAttic conTypCei,
     redeclare Data.Ppd12WestShadingSecond shaTypC,
-    n50=n50)
+    n50=n50,
+    A_winC=1*0.55 + 1*1.4,
+    h=hFloor2)
     "Master bedroom"
     annotation (Placement(transformation(extent={{276,82},{256,62}})));
   IDEAS.Buildings.Components.RectangularZoneTemplate bedRoom3(
@@ -311,7 +311,6 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.CommonWall conTypB,
     l=wBedroom,
     w=lHalfBuilding,
-    h=hFloor1,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall10 conTypA,
     bouTypFlo=IDEAS.Buildings.Components.Interfaces.BoundaryType.InternalWall,
     redeclare IDEAS.Examples.PPD12.Data.Roof conTypCei,
@@ -325,16 +324,17 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.TripleGlazing glazingA,
     nSurfExt=3,
     calculateViewFactor=false,
-    n50=n50)
+    n50=n50,
+    h=hFloor2)
     "Master bedroom"
     annotation (Placement(transformation(extent={{280,40},{260,20}})));
 
-  IDEAS.Buildings.Components.OuterWall Roof1(
+  IDEAS.Buildings.Components.OuterWall RoofWest(
     inc=(IDEAS.Types.Tilt.Wall + IDEAS.Types.Tilt.Ceiling)/2,
     azi=west,
     A=wBedroom*lHalfBuilding*sqrt(2),
     redeclare IDEAS.Examples.PPD12.Data.Roof constructionType)
-    "Roof, west side"                     annotation (Placement(transformation(
+    "Roof, west side" annotation (Placement(transformation(
         extent={{-5,-10},{5,10}},
         rotation=90,
         origin={283,-2})));
@@ -434,11 +434,11 @@ equation
       points={{307,2.16667},{307,21.3333},{282,21.3333}},
       color={255,204,51},
       thickness=0.5));
-  connect(Roof1.propsBus_a, bedRoom3.proBusExt[2]) annotation (Line(
+  connect(RoofWest.propsBus_a, bedRoom3.proBusExt[2]) annotation (Line(
       points={{281,2.16667},{281,11.5},{282,11.5},{282,20}},
       color={255,204,51},
       thickness=0.5));
-  connect(Roof2.propsBus_a, bedRoom3.proBusCei) annotation (Line(
+  connect(RoofEast.propsBus_a, bedRoom3.proBusCei) annotation (Line(
       points={{261,2.16667},{261,24},{270.2,24}},
       color={255,204,51},
       thickness=0.5));
