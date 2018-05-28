@@ -23,7 +23,7 @@ model Ventilation "Ppd 12 example model"
     use_inputFilter=false,
     dp_nominal=300,
     redeclare package Medium = MediumAir,
-    constantMassFlowRate=200*1.2/3600)    "Supply fan"
+    constantMassFlowRate=65*1.2/3600)     "Supply fan"
     annotation (Placement(transformation(extent={{340,130},{320,150}})));
   IDEAS.Fluid.Movers.FlowControlled_m_flow fanRet(
     energyDynamics=Modelica.Fluid.Types.Dynamics.SteadyState,
@@ -33,7 +33,7 @@ model Ventilation "Ppd 12 example model"
     use_inputFilter=false,
     dp_nominal=300,
     redeclare package Medium = MediumAir,
-    constantMassFlowRate=200*1.2/3600)    "Return fan"
+    constantMassFlowRate=65*1.2/3600)     "Return fan"
     annotation (Placement(transformation(extent={{320,170},{340,190}})));
   IDEAS.Fluid.Sources.Boundary_pT bouAir(
     nPorts=3,

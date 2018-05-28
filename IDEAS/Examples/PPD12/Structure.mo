@@ -40,6 +40,8 @@ model Structure "Ppd 12 example model"
     "Azimuth of the wall, i.e. 0deg denotes South";
 
 
+  Modelica.Blocks.Interfaces.RealOutput TCeiLiv = cei2.layMul.monLay[5].port_b.T "Temperature sensor on top of living ceiling";
+
   IDEAS.Buildings.Components.BoundaryWall com1(
     inc=IDEAS.Types.Tilt.Wall,
     azi=south,
@@ -499,6 +501,10 @@ This model only contains the building structure.
 </p>
 </html>", revisions="<html>
 <ul>
+<li>
+May 28, 2018 by Filip Jorissen:<br/>
+Improved parameter accuracy.
+</li>
 <li>
 December 20, 2016 by Filip Jorissen:<br/>
 First implementation.

@@ -13,8 +13,8 @@ model Heating "Ppd 12 example model"
     "Nominal air mass flow rate";
 
   //CONTROL
-  parameter Modelica.SIunits.Temperature TSet=294.15 "Temperature set point";
-  parameter Modelica.SIunits.Temperature TSet2=296.15 "Temperature set point";
+  parameter Modelica.SIunits.Temperature TSet=273.15+16 "Temperature set point";
+  parameter Modelica.SIunits.Temperature TSet2=295.15 "Temperature set point";
 
   IDEAS.Fluid.HeatExchangers.Radiators.RadiatorEN442_2 radGnd(
     redeclare package Medium = MediumWater,
@@ -193,14 +193,13 @@ model Heating "Ppd 12 example model"
         origin={49,-155})));
   IDEAS.Fluid.Actuators.Valves.TwoWayTRV valBat2(
     redeclare package Medium = MediumWater,
-    TSet=TSet,
     m_flow_nominal=m_flow_nominal,
     CvData=IDEAS.Fluid.Types.CvTypes.Kv,
     Kv=0.5,
     allowFlowReversal=false,
     use_inputFilter=true,
-    from_dp=false)
-                  "Thermostatic radiator valve for towel dryer in bathroom"
+    from_dp=false,
+    TSet=TSet2)   "Thermostatic radiator valve for towel dryer in bathroom"
     annotation (Placement(transformation(
         extent={{10,-10},{-10,10}},
         rotation=90,
@@ -212,14 +211,13 @@ model Heating "Ppd 12 example model"
         origin={79,-155})));
   IDEAS.Fluid.Actuators.Valves.TwoWayTRV valBat1(
     redeclare package Medium = MediumWater,
-    TSet=TSet,
     m_flow_nominal=m_flow_nominal,
     CvData=IDEAS.Fluid.Types.CvTypes.Kv,
     Kv=0.5,
     allowFlowReversal=false,
     use_inputFilter=true,
-    from_dp=false)
-                  "Thermostatic radiator valve for radiator in bathroom"
+    from_dp=false,
+    TSet=TSet2)   "Thermostatic radiator valve for radiator in bathroom"
     annotation (Placement(transformation(
         extent={{10,-10},{-10,10}},
         rotation=90,
@@ -478,12 +476,12 @@ equation
           {349,-102}}, color={0,0,127}));
   connect(senTemRadBed1.T, valBed1.T) annotation (Line(points={{49,-148},{49.4,-148},
           {49.4,-140}}, color={0,0,127}));
-  connect(senTemRadBed1.port, radBed1.heatPortCon) annotation (Line(points={{49,
-          -162},{49,-168},{52.8,-168}}, color={191,0,0}));
-  connect(valBed1.port_a, spl4.port_3) annotation (Line(points={{60,-130},{60,-130},
-          {60,-120}}, color={0,127,255}));
-  connect(valBed1.port_b, radBed1.port_a) annotation (Line(points={{60,-150},{60,
-          -155},{60,-160}}, color={0,127,255}));
+  connect(senTemRadBed1.port, radBed1.heatPortCon) annotation (Line(points={{49,-162},
+          {49,-168},{52.8,-168}},       color={191,0,0}));
+  connect(valBed1.port_a, spl4.port_3) annotation (Line(points={{60,-130},{60,
+          -120}},     color={0,127,255}));
+  connect(valBed1.port_b, radBed1.port_a) annotation (Line(points={{60,-150},{
+          60,-160}},        color={0,127,255}));
   connect(senTemRadBat2.T, valBat2.T) annotation (Line(points={{79,-148},{79.4,-148},
           {79.4,-140}}, color={0,0,127}));
   connect(valBat2.port_b, radBat2.port_a) annotation (Line(points={{90,-150},{90,
@@ -579,6 +577,10 @@ This model adds the building heating system.
 </p>
 </html>", revisions="<html>
 <ul>
+<li>
+May 28, 2018 by Filip Jorissen:<br/>
+Improved parameter accuracy.
+</li>
 <li>
 January 9, 2017 by Filip Jorissen:<br/>
 First implementation.
