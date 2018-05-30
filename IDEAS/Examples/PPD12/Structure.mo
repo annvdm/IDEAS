@@ -3,7 +3,8 @@ model Structure "Ppd 12 example model"
   extends Modelica.Icons.Example;
   inner IDEAS.BoundaryConditions.SimInfoManager sim
     annotation (Placement(transformation(extent={{400,38},{380,58}})));
-  parameter Real n50=8
+  // n50 based on 300 m3/h extraction at 20 Pa differential pressure
+  parameter Real n50=1.1
     "n50 value cfr airtightness, i.e. the ACH at a pressure diffence of 50 Pa";
   package MediumAir = IDEAS.Media.Air;
   package MediumWater = IDEAS.Media.Water;
