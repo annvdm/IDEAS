@@ -4,29 +4,30 @@ model Structure "Ppd 12 example model"
   inner SimInfoManagerPpd12                     sim(ang=
         Modelica.SIunits.Conversions.from_deg(angDelta))
     annotation (Placement(transformation(extent={{400,38},{380,58}})));
+  // n50 based on 300 m3/h extraction at 20 Pa differential pressure
   parameter Real n50=1.1
     "n50 value cfr airtightness, i.e. the ACH at a pressure diffence of 50 Pa";
   package MediumAir = IDEAS.Media.Air;
   package MediumWater = IDEAS.Media.Water;
 
-  // GEOMETRY
-  parameter Modelica.SIunits.Length hFloor0=2.9 "Height of ground floor";
-  parameter Modelica.SIunits.Length hFloor1=2.7 "Height of first floor";
-  parameter Modelica.SIunits.Length hFloor2=2.5 "Height of second floor";
+  // GEOMETRY - distances are measured center-to-center of walls
+  parameter Modelica.SIunits.Length hFloor0=2.9 "Height of ground floor: ground to ceiling";
+  parameter Modelica.SIunits.Length hFloor1=2.7 "Height of first floor: ground to ceiling";
+  parameter Modelica.SIunits.Length hFloor2=2.5 "Height of second floor: ground to ceiling";
   parameter Modelica.SIunits.Length lHallway=8 "Length of hallway";
   parameter Modelica.SIunits.Length wHallwayAvg=(wHallway1+wHallway2)/2 "Hallway width";
   parameter Modelica.SIunits.Length wHallway1=1.1 "Hallway width";
-  parameter Modelica.SIunits.Length wHallway2=1.4 "Hallway width";
+  parameter Modelica.SIunits.Length wHallway2=1.6 "Hallway width";
   parameter Modelica.SIunits.Length wZon=(wZonStr+wBathroom)/2 "Avg living width";
   parameter Modelica.SIunits.Length wZonStr=3.2 "Living width at street";
-  parameter Modelica.SIunits.Length wBuilding = 4.6;
+  parameter Modelica.SIunits.Length wBuilding = 4.6 "Building width - between common wall centers";
   parameter Modelica.SIunits.Length wBathroom = 2.85;
-  parameter Modelica.SIunits.Length lDiner = 3;
+  parameter Modelica.SIunits.Length lDiner = 3.1;
   parameter Modelica.SIunits.Length wBedroom = 4.4;
   parameter Modelica.SIunits.Length wDiner = 4.5;
-  parameter Modelica.SIunits.Length lPorch = 2;
+  parameter Modelica.SIunits.Length lPorch = 2.1;
   parameter Modelica.SIunits.Length wPorch = wBuilding-wKitchen;
-  parameter Modelica.SIunits.Length wKitchen = 1.4;
+  parameter Modelica.SIunits.Length wKitchen = 1.4 "Width of kitchen";
   parameter Modelica.SIunits.Length lHalfBuilding = 3.75;
   parameter Modelica.SIunits.Length lBuilding = 8;
 
@@ -40,6 +41,8 @@ model Structure "Ppd 12 example model"
   parameter Modelica.SIunits.Angle east = IDEAS.Types.Azimuth.E + Modelica.SIunits.Conversions.from_deg(angDelta)
     "Azimuth of the wall, i.e. 0deg denotes South";
 
+
+  Modelica.Blocks.Interfaces.RealOutput TCeiLiv = cei2.layMul.monLay[5].port_b.T "Temperature sensor on top of living ceiling";
 
   IDEAS.Buildings.Components.BoundaryWall com1(
     inc=IDEAS.Types.Tilt.Wall,
@@ -74,17 +77,17 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.PvcInsulated fraType,
     redeclare IDEAS.Buildings.Data.Glazing.Ins2Ar glazing,
     inc=(IDEAS.Types.Tilt.Wall + IDEAS.Types.Tilt.Ceiling)/2,
-    A=1.2*1) "Window roof, bedroom 3"
+    A=1.3*0.95)
+             "Window roof, bedroom 3"
     annotation (Placement(transformation(
         extent={{-5,10},{5,-10}},
         rotation=90,
         origin={305,-2})));
-  IDEAS.Buildings.Components.OuterWall Roof2(
+  IDEAS.Buildings.Components.OuterWall RoofEast(
     azi=east,
     inc=(IDEAS.Types.Tilt.Wall + IDEAS.Types.Tilt.Ceiling)/2,
-    A=wBedroom*lHalfBuilding*sqrt(2)/2,
-    redeclare IDEAS.Examples.PPD12.Data.Roof constructionType)
-    "Roof, east side"
+    redeclare IDEAS.Examples.PPD12.Data.Roof constructionType,
+    A=wBedroom*lHalfBuilding*sqrt(2)/2 - winBed3.A) "Roof, east side"
     annotation (Placement(transformation(
         extent={{-5,-10},{5,10}},
         rotation=90,
@@ -114,7 +117,6 @@ model Structure "Ppd 12 example model"
     bouTypFlo=IDEAS.Buildings.Components.Interfaces.BoundaryType.SlabOnGround,
     bouTypCei=IDEAS.Buildings.Components.Interfaces.BoundaryType.External,
     redeclare IDEAS.Examples.PPD12.Data.TripleGlazing glazingC,
-    A_winC=2.55*1.74,
     fracC=0.1,
     redeclare IDEAS.Examples.PPD12.Data.OuterWall conTypC,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall10 conTypA,
@@ -126,7 +128,8 @@ model Structure "Ppd 12 example model"
     n50=n50,
     hasCavityA=true,
     hA=2.7,
-    wA=2)
+    wA=2,
+    A_winC=2.42*1.75)
     annotation (Placement(transformation(extent={{-26,56},{-46,36}})));
 
   IDEAS.Buildings.Components.RectangularZoneTemplate hallway(
@@ -292,8 +295,6 @@ model Structure "Ppd 12 example model"
     fracC=0.15,
     l=wBedroom,
     w=lHalfBuilding,
-    h=hFloor1,
-    A_winC=1.1*0.66 + 1.1*1.54,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall18 conTypC,
     bouTypA=IDEAS.Buildings.Components.Interfaces.BoundaryType.InternalWall,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall10 conTypA,
@@ -303,7 +304,9 @@ model Structure "Ppd 12 example model"
     bouTypCei=IDEAS.Buildings.Components.Interfaces.BoundaryType.BoundaryWall,
     redeclare IDEAS.Examples.PPD12.Data.FloorAttic conTypCei,
     redeclare Data.Ppd12WestShadingSecond shaTypC,
-    n50=n50)
+    n50=n50,
+    A_winC=1*0.55 + 1*1.4,
+    h=hFloor2)
     "Master bedroom"
     annotation (Placement(transformation(extent={{276,82},{256,62}})));
   IDEAS.Buildings.Components.RectangularZoneTemplate bedRoom3(
@@ -315,7 +318,6 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.CommonWall conTypB,
     l=wBedroom,
     w=lHalfBuilding,
-    h=hFloor1,
     redeclare IDEAS.Examples.PPD12.Data.InteriorWall10 conTypA,
     bouTypFlo=IDEAS.Buildings.Components.Interfaces.BoundaryType.InternalWall,
     redeclare IDEAS.Examples.PPD12.Data.Roof conTypCei,
@@ -329,16 +331,17 @@ model Structure "Ppd 12 example model"
     redeclare IDEAS.Examples.PPD12.Data.TripleGlazing glazingA,
     nSurfExt=3,
     calculateViewFactor=false,
-    n50=n50)
+    n50=n50,
+    h=hFloor2)
     "Master bedroom"
     annotation (Placement(transformation(extent={{280,40},{260,20}})));
 
-  IDEAS.Buildings.Components.OuterWall Roof1(
+  IDEAS.Buildings.Components.OuterWall RoofWest(
     inc=(IDEAS.Types.Tilt.Wall + IDEAS.Types.Tilt.Ceiling)/2,
     azi=west,
     A=wBedroom*lHalfBuilding*sqrt(2),
     redeclare IDEAS.Examples.PPD12.Data.Roof constructionType)
-    "Roof, west side"                     annotation (Placement(transformation(
+    "Roof, west side" annotation (Placement(transformation(
         extent={{-5,-10},{5,10}},
         rotation=90,
         origin={283,-2})));
@@ -438,11 +441,11 @@ equation
       points={{307,2.16667},{307,21.3333},{282,21.3333}},
       color={255,204,51},
       thickness=0.5));
-  connect(Roof1.propsBus_a, bedRoom3.proBusExt[2]) annotation (Line(
+  connect(RoofWest.propsBus_a, bedRoom3.proBusExt[2]) annotation (Line(
       points={{281,2.16667},{281,11.5},{282,11.5},{282,20}},
       color={255,204,51},
       thickness=0.5));
-  connect(Roof2.propsBus_a, bedRoom3.proBusCei) annotation (Line(
+  connect(RoofEast.propsBus_a, bedRoom3.proBusCei) annotation (Line(
       points={{261,2.16667},{261,24},{270.2,24}},
       color={255,204,51},
       thickness=0.5));
@@ -507,6 +510,10 @@ This model only contains the building structure.
 May 21, 2018, by Filip Jorissen:<br/>
 Using model for air flow through vertical cavity.
 See <a href=\"https://github.com/open-ideas/IDEAS/issues/822\">#822</a>.
+</li>
+<li>
+May 28, 2018 by Filip Jorissen:<br/>
+Improved parameter accuracy.
 </li>
 <li>
 December 20, 2016 by Filip Jorissen:<br/>
